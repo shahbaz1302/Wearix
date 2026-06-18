@@ -53,7 +53,7 @@ passport.deserializeUser((user,done)=>{
     done(null,user)
 })
 
-app.get("/user/google",passport.authenticate("google",{
+app.get(`/user/google`,passport.authenticate("google",{
     scope:["email","profile"],
     prompt:"select_account"
 }))

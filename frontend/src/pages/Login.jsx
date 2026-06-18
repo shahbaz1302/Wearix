@@ -10,7 +10,7 @@ import PasswordStrengthMeter from "../components/PasswordStrengthMeter"
 
 const Login = () => {
   const [currentState, setCurrentState] = useState("Login")
-  const { theme, navigate, getUserCart } = useContext(ShopContext)
+  const { theme, navigate, getUserCart, backendUrl } = useContext(ShopContext)
   const [name, setName] = useState("")
   const [password, setPassword] = useState("")
   const [email, setEmail] = useState("")
@@ -36,7 +36,7 @@ const Login = () => {
   }
 
   const loginWithGoogle = () => {
-    window.location.href = "http://localhost:4000/user/google"
+    window.location.href = `${backendUrl}/user/google`
   }
 
   return (
