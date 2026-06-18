@@ -82,8 +82,8 @@ export const placeOrderStripe = async (req, res) => {
             quantity: 1
         })
         const session = await stripe.checkout.sessions.create({ 
-            success_url: `${origin}/verify?success=true&method=stripe&orderId=${newOrder._id}`,
-            cancel_url: `${origin}/verify?success=false&method=stripe&orderId=${newOrder._id}`, line_items,
+            success_url: `${origin}/verify?success=true&method=stripe&payment=paid&orderId=${newOrder._id}`,
+            cancel_url: `${origin}/verify?success=false&method=stripe&payment=pending&orderId=${newOrder._id}`, line_items,
             mode: "payment",
         })
         res.status(200).json({ success: true, session_url: session.url })
