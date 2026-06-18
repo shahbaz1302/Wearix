@@ -49,7 +49,7 @@ export const authenticateUser = async (req, res, user) => {
 
     const refreshToken = createRefreshToken(session._id);
 
-    const baseConfig = { httpOnly: true, secure: true };
+    const baseConfig = { httpOnly: true, secure: true, sameSite: "none" };
     res.cookie("accessToken", accessToken, { ...baseConfig, maxAge: 15 * 60 * 1000 });
     res.cookie("refreshToken", refreshToken, { ...baseConfig, maxAge: 7 * 24 * 60 * 60 * 1000 });
 }
