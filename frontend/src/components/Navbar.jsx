@@ -15,6 +15,7 @@ const Navbar = () => {
     const [visible, setVisible] = useState(false)
     const [showLogo, setShowLogo] = useState(true)
     const [searchExpanded, setSearchExpanded] = useState(false);
+    const [mobileProfileOpen, setMobileProfileOpen] = useState(false);
     const { showSearch, setShowSearch, search, setSearch, theme, setTheme, getCartCount, navigate, setCartItems } = useContext(ShopContext)
     const { logout, isAuthenticated, checkAuth } = useAuthStore();
     const inputRef = useRef(null);
@@ -30,24 +31,6 @@ const Navbar = () => {
             toast.error(error.response?.data?.message || error.message);
         }
     }
-
-    useEffect(() => {
-        checkAuth();
-    }, [checkAuth]);
-
-    useEffect(() => {
-        if (searchExpanded) {
-            inputRef.current?.focus();
-        }
-    }, [searchExpanded]);
-
-    useEffect(() => {
-        if (!location.pathname.includes("collection")) {
-            setSearchExpanded(false);
-            setShowSearch(false);
-            setSearch("");
-        }
-    }, [location.pathname, setSearch, setShowSearch]);
 
     const handleOpenSearch = () => {
         setSearchExpanded(true);
@@ -66,6 +49,39 @@ const Navbar = () => {
         setSearch("");
         setShowLogo(true)
     };
+
+    const handleProfileClick = () => {
+        const isMobile = window.innerWidth < 640;
+
+        if (isMobile) {
+            if (isAuthenticated) {
+                setMobileProfileOpen((prev) => !prev);
+            }
+            return;
+        }
+
+        if (!isAuthenticated) {
+            navigate("/login");
+        }
+    };
+
+    useEffect(() => {
+        checkAuth();
+    }, [checkAuth]);
+
+    useEffect(() => {
+        if (searchExpanded) {
+            inputRef.current?.focus();
+        }
+    }, [searchExpanded]);
+
+    useEffect(() => {
+        if (!location.pathname.includes("collection")) {
+            setSearchExpanded(false);
+            setShowSearch(false);
+            setSearch("");
+        }
+    }, [location.pathname, setSearch, setShowSearch]);
 
     return (
         <div className="flex items-center justify-between py-5 font-medium">
@@ -129,15 +145,60 @@ const Navbar = () => {
                         </div>
                     )}
                     <div className="group relative">
-                        <RxPerson onClick={() => isAuthenticated ? null : navigate("/login")} className="w-6 h-6 cursor-pointer" />
-                        <div className="group-hover:block hidden absolute dropdown-menu right-0 pt-4">
-                            {isAuthenticated &&
-                                <div className="flex flex-col gap-2 w-36 py-3 px-5 bg-slate-100 text-gray-500 rounded">
-                                    <p onClick={() => navigate("/profile")} className="cursor-pointer hover:text-black">My Profile</p>
-                                    <p onClick={() => navigate("/wishlist")} className="cursor-pointer hover:text-black">My Wishlist</p>
-                                    <p onClick={logoutUser} className="cursor-pointer hover:text-black">Logout</p>
-                                </div>}
-                        </div>
+                        <RxPerson
+                            onClick={handleProfileClick}
+                            className="w-6 h-6 cursor-pointer"
+                        />
+
+                        {isAuthenticated && (
+                            <>
+                                <div className="hidden sm:group-hover:block sm:absolute dropdown-menu right-0 pt-4 z-20">
+                                    <div className="flex flex-col gap-2 w-36 py-3 px-5 bg-slate-100 text-gray-500 rounded">
+                                        <p onClick={() => navigate("/profile")} className="cursor-pointer hover:text-black">
+                                            My Profile
+                                        </p>
+                                        <p onClick={() => navigate("/wishlist")} className="cursor-pointer hover:text-black">
+                                            My Wishlist
+                                        </p>
+                                        <p onClick={logoutUser} className="cursor-pointer hover:text-black">
+                                            Logout
+                                        </p>
+                                    </div>
+                                </div>
+
+                                {mobileProfileOpen && (
+                                    <div className="absolute right-0 top-8 z-20 w-36 rounded bg-slate-100 px-5 py-3 text-gray-500 shadow sm:hidden">
+                                        <p
+                                            onClick={() => {
+                                                navigate("/profile");
+                                                setMobileProfileOpen(false);
+                                            }}
+                                            className="cursor-pointer hover:text-black"
+                                        >
+                                            My Profile
+                                        </p>
+                                        <p
+                                            onClick={() => {
+                                                navigate("/wishlist");
+                                                setMobileProfileOpen(false);
+                                            }}
+                                            className="cursor-pointer hover:text-black"
+                                        >
+                                            My Wishlist
+                                        </p>
+                                        <p
+                                            onClick={() => {
+                                                logoutUser();
+                                                setMobileProfileOpen(false);
+                                            }}
+                                            className="cursor-pointer hover:text-black"
+                                        >
+                                            Logout
+                                        </p>
+                                    </div>
+                                )}
+                            </>
+                        )}
                     </div>
                     <Link to="/cart" className="relative">
                         <PiHandbag className="w-6 h-6 min-w-5" />
@@ -170,6 +231,9 @@ const Navbar = () => {
                                 <p>CONTACT</p>
                                 <hr className="w-2/4 mx-auto border-none h-[1.5px] bg-gray-700 hidden" />
                             </NavLink>
+                            <button onClick={()=>navigate("/login")} className={`bg-black text-white ml-5 mt-3 px-8 py-2 font-light cursor-pointer rounded-lg`}>
+                                Login
+                            </button>
                         </ul>
                     </div>
                 </div>
