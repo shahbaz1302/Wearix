@@ -231,7 +231,7 @@ const Navbar = () => {
                                 <p>CONTACT</p>
                                 <hr className="w-2/4 mx-auto border-none h-[1.5px] bg-gray-700 hidden" />
                             </NavLink>
-                            <button onClick={()=>{navigate("/login"); setVisible(false)}} className={`bg-black text-white ml-5 mt-3 px-8 py-2 font-light cursor-pointer rounded-lg`}>
+                            <button onClick={() => { navigate("/login"); setVisible(false) }} className={`bg-black text-white ml-5 mt-3 px-8 py-2 font-light cursor-pointer rounded-lg`} disabled={isAuthenticated?true:false}>
                                 Login
                             </button>
                         </ul>
